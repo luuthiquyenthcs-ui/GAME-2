@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Game HÀNH TRÌNH DI SẢN</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: #111;
+    color: white;
+}
+
+h1 {
+    color: red;
+}
+
+#wheel {
+    margin: 20px auto;
+    width: 250px;
+    height: 250px;
+    border: 8px solid white;
+    border-radius: 50%;
+    transition: transform 2s;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+#questionBox {
+    margin-top: 20px;
+    font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎮 TRÒ CHƠI HÀNH TRÌNH DI SẢN</h1>
+
+<!-- 🔊 ÂM THANH -->
+<audio id="spinSound" src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3"></audio>
+<audio id="winSound" src="https://www.soundjay.com/button/sounds/button-3.mp3"></audio>
+<audio id="loseSound" src="https://www.soundjay.com/button/sounds/button-10.mp3"></audio>
+
+<div id="wheel"></div>
+
+<button onclick="spin()">🎡 Quay</button>
+
+<div id="questionBox"></div>
+
+<script>
+const questions = [
+    {
+        name: "Chùa Sóc Lớn",
+        question: "Chùa Sóc Lớn thuộc xã nào?",
+        answers: ["Lộc Hưng", "Lộc Khánh", "Lộc Thành", "Lộc Thái"],
+        correct: 0
+    },
+    {
+        name: "Lễ hội",
+        question: "Xã Lộc Hưng có lễ hội nào nổi tiếng của người Khmer?",
+        answers: ["Phá Bàu", "Ẩm Thực", "Âm Nhạc", "Múa"],
+        correct: 0
+    },
+    {
+        name: "Tà Thiết",
+        question: "Tà Thiết gắn với sự kiện nào?",
+        answers: ["Kháng chiến", "Thể thao", "Du lịch", "Âm nhạc"],
+        correct: 0
+    },
+    {
+        name: "Nhà giao tế",
+        question: "Nhà Giao Tế có gì đặc biệt?",
+        answers: ["Di tích lịch sử", "Trường học", "Chợ", "Bệnh viện"],
+        correct: 0
+    }
+];
+
+// 🎨 TẠO MÀU TỰ ĐỘNG
+const colors = ["red", "orange", "yellow", "green", "blue", "purple", "pink", "cyan"];
+
+function createWheel() {
+    let n = questions.length;
+    let deg = 360 / n;
+    let gradient = "";
+
+    for (let i = 0; i < n; i++) {
+        let start = i * deg;
+        let end = start + deg;
+
+        gradient += `${colors[i % colors.length]} ${start}deg ${end}deg`;
+
+        if (i < n - 1) gradient += ", ";
+    }
+
+    document.getElementById("wheel").style.background =
+        "conic-gradient(" + gradient + ")";
+}
+
+createWheel();
+
+// 🎡 QUAY
+function spin() {
+    let index = Math.floor(Math.random() * questions.length);
+    let q = questions[index];
+
+    let spinSound = document.getElementById("spinSound");
+    spinSound.currentTime = 0;
+    spinSound.play();
+
+    let deg = Math.floor(Math.random() * 360 + 720);
+    document.getElementById("wheel").style.transform = "rotate(" + deg + "deg)";
+
+    setTimeout(() => {
+        spinSound.pause();
+        showQuestion(q);
+    }, 2000);
+}
+
+// ❓ HIỆN CÂU HỎI
+function showQuestion(q) {
+    let html = "<h3>" + q.name + "</h3>";
+    html += "<p>" + q.question + "</p>";
+
+    q.answers.forEach((ans, i) => {
+        html += `<button onclick="checkAnswer(${i}, ${q.correct})">${ans}</button><br>`;
+    });
+
+    document.getElementById("questionBox").innerHTML = html;
+}
+
+// ✅ CHECK ĐÁP ÁN + ÂM THANH
+function checkAnswer(selected, correct) {
+    if (selected === correct) {
+        document.getElementById("winSound").play();
+        alert("✅ Đúng!");
+    } else {
+        document.getElementById("loseSound").play();
+        alert("❌ Sai!");
+    }
+}
+</script>
+
+</body>
+</html>
